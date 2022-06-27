@@ -3,10 +3,10 @@ package com.example.velotochka.controllers;
 import com.example.velotochka.entities.Category;
 import com.example.velotochka.entities.Product;
 import com.example.velotochka.services.ProductService;
-import com.example.velotochka.services.CategotyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin
 @RestController
@@ -14,12 +14,10 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     @Autowired
     private ProductService productService;
-    @Autowired
-    private CategotyService categotyService;
     @GetMapping
     public ResponseEntity getProducts() {
         try {
-            return ResponseEntity.ok(productService.findAll());
+            return ResponseEntity.ok(productService.findAllProducts());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
@@ -27,15 +25,15 @@ public class ProductController {
     @GetMapping("{id}")
     public ResponseEntity getProductById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(productService.findById(id));
+            return ResponseEntity.ok(productService.findProductById(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
     }
     @PostMapping
-    public ResponseEntity saveProduct(@RequestBody Product product, @RequestParam String category) {
+    public ResponseEntity saveProduct(@RequestBody Product product) {
         try {
-            return ResponseEntity.ok(productService.save(product, category));
+            return ResponseEntity.ok(productService.saveProduct(product));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
@@ -43,7 +41,7 @@ public class ProductController {
     @DeleteMapping("{id}")
     public ResponseEntity deleteProductById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(productService.deleteById(id));
+            return ResponseEntity.ok(productService.deleteProductById(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
@@ -51,7 +49,7 @@ public class ProductController {
     @GetMapping("/categories")
     public ResponseEntity getProductTypes() {
         try {
-            return ResponseEntity.ok(categotyService.findAll());
+            return ResponseEntity.ok(productService.findAllCategories());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
@@ -59,7 +57,25 @@ public class ProductController {
     @PostMapping("/categories")
     public ResponseEntity saveCategory(@RequestBody Category category) {
         try {
-            return ResponseEntity.ok(categotyService.save(category));
+            return ResponseEntity.ok(productService.saveCategory(category));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+    @GetMapping("/categories/{category}")
+    public ResponseEntity getCategoryProducts(@PathVariable String category) {
+        try {
+            return ResponseEntity.ok(productService.findByCategory(category));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity deleteCategoryById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(productService.deleteCategoryById(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
