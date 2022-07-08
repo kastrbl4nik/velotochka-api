@@ -1,5 +1,9 @@
 # velotochka-api
 
+### Connect to database
+
+In MySQL create a database, and change the `application.properties` file accordingly if needed.
+
 ### Routes
 
 | HTTP Request | URI                                  |
