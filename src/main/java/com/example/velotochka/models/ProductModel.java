@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ProductModel {
@@ -19,7 +20,7 @@ public class ProductModel {
     private Date created;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date updated;
-    private List<Feature> features;
+    private Map<String, Object> features;
     private Set<Image> images;
     public static ProductModel toModel(Product product) {
         return new ProductModel(
@@ -30,12 +31,12 @@ public class ProductModel {
                 product.getCategory().getName(),
                 product.getCreated(),
                 product.getUpdated(),
-                product.getFeatures(),
+                product.getFeaturesMap(),
                 product.getImages()
         );
     }
 
-    public ProductModel(Long id, String name, Double price, String description, String category, Date created, Date updated, List<Feature> features, Set<Image> images) {
+    public ProductModel(Long id, String name, Double price, String description, String category, Date created, Date updated, Map<String, Object> features, Set<Image> images) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -95,11 +96,11 @@ public class ProductModel {
         this.updated = updated;
     }
 
-    public List<Feature> getFeatures() {
+    public Map<String, Object> getFeatures() {
         return features;
     }
 
-    public void setFeatures(List<Feature> features) {
+    public void setFeatures(Map<String, Object> features) {
         this.features = features;
     }
 

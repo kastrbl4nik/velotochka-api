@@ -7,9 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -90,6 +88,14 @@ public class Product {
 
     public List<Feature> getFeatures() {
         return features;
+    }
+    public Map<String, Object> getFeaturesMap() {
+        Map<String, Object> result = new HashMap<String, Object>();
+        for (Feature f :
+                features) {
+            result.put(f.name, f.getConvertedValue());
+        }
+        return result;
     }
 
     public void setFeatures(List<Feature> features) {
