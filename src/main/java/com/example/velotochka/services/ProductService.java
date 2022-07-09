@@ -18,24 +18,35 @@ public class ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
     public List<ProductModel> findAllProducts() {
-        return productRepository.findAll().stream().map(ProductModel::toModel).collect(Collectors.toList());
+        return productRepository.findAll().stream()
+                .map(ProductModel::toModel)
+                .collect(Collectors.toList());
     }
-    public Product saveProduct(Product product) throws RuntimeException {
-        Category existingCategory = categoryRepository.findByName(product.getCategory().getName());
-        if(existingCategory != null)
-            product.setCategory(existingCategory);
-        categoryRepository.save(product.getCategory());
-        return productRepository.save(product);
+    public ProductModel saveProduct(Product product) throws RuntimeException {
+        Category category = product.getCategory();
+        if (category != null) {
+            Category existingCategory = categoryRepository.findByName(category.getName());
+            if (existingCategory != null) {
+                product.setCategory(existingCategory);
+            } else {
+                categoryRepository.save(product.getCategory());
+            }
+        } else {
+            throw new IllegalArgumentException("Category cannot be null.");
+        }
+        return ProductModel.toModel(productRepository.save(product));
     }
     public ProductModel findProductById(Long id) {
-        return ProductModel.toModel(productRepository.findById(id).get());
+        return ProductModel.toModel(productRepository.findById(id).orElse(new Product()));
     }
     public Long deleteProductById(Long id) {
         productRepository.deleteById(id);
         return id;
     }
     public List<ProductModel> findByCategory(String category) {
-        return productRepository.findByCategoryName(category).stream().map(ProductModel::toModel).collect(Collectors.toList());
+        return productRepository.findByCategoryName(category).stream()
+                .map(ProductModel::toModel)
+                .collect(Collectors.toList());
     }
     public List<String> findAllCategories() {
         return categoryRepository.findAll().stream().map(Category::getName).collect(Collectors.toList());
