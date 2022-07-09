@@ -8,76 +8,61 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.function.Supplier;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
+
     @GetMapping
     public ResponseEntity getProducts() {
-        try {
-            return ResponseEntity.ok(productService.findAllProducts());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        return createResponseEntity(() -> productService.findAllProducts());
     }
+
     @GetMapping("{id}")
     public ResponseEntity getProductById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(productService.findProductById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        return createResponseEntity(() -> productService.findProductById(id));
     }
+
     @PostMapping
     public ResponseEntity saveProduct(@RequestBody Product product) {
-        try {
-            return ResponseEntity.ok(productService.saveProduct(product));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        return createResponseEntity(() -> productService.saveProduct(product));
     }
+
     @DeleteMapping("{id}")
     public ResponseEntity deleteProductById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(productService.deleteProductById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        return createResponseEntity(() -> productService.deleteProductById(id));
     }
+
     @GetMapping("/categories")
     public ResponseEntity getProductTypes() {
-        try {
-            return ResponseEntity.ok(productService.findAllCategories());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        return createResponseEntity(() -> productService.findAllCategories());
     }
+
     @PostMapping("/categories")
     public ResponseEntity saveCategory(@RequestBody Category category) {
-        try {
-            return ResponseEntity.ok(productService.saveCategory(category));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
+        return createResponseEntity(() -> productService.saveCategory(category));
     }
 
     @GetMapping("/categories/{category}")
     public ResponseEntity getCategoryProducts(@PathVariable String category) {
+        return createResponseEntity(() -> productService.findByCategory(category));
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity deleteCategoryById(@PathVariable Long id) {
+        return createResponseEntity(() -> productService.deleteCategoryById(id));
+    }
+
+    private ResponseEntity<Object> createResponseEntity(Supplier<Object> supplier) {
         try {
-            return ResponseEntity.ok(productService.findByCategory(category));
+            return ResponseEntity.ok(supplier.get());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e);
         }
     }
 
-    @DeleteMapping("/categories/{id}")
-    public ResponseEntity deleteCategoryById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(productService.deleteCategoryById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e);
-        }
-    }
 }
