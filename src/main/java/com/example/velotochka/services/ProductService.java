@@ -1,6 +1,7 @@
 package com.example.velotochka.services;
 
 import com.example.velotochka.entities.Category;
+import com.example.velotochka.entities.Image;
 import com.example.velotochka.entities.Product;
 import com.example.velotochka.models.ProductModel;
 import com.example.velotochka.repositories.CategoryRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +35,10 @@ public class ProductService {
             }
         } else {
             throw new IllegalArgumentException("Category cannot be null.");
+        }
+        Set<Image> images = product.getImages();
+        for (Image image : images) {
+            image.setProduct(product);
         }
         return ProductModel.toModel(productRepository.save(product));
     }
