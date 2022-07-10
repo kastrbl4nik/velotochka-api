@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ProductModel {
     private Long id;
@@ -21,7 +22,7 @@ public class ProductModel {
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date updated;
     private Map<String, Object> features;
-    private Set<Image> images;
+    private Set<byte[]> images;
     public static ProductModel toModel(Product product) {
         return new ProductModel(
                 product.getId(),
@@ -32,11 +33,13 @@ public class ProductModel {
                 product.getCreated(),
                 product.getUpdated(),
                 product.getFeaturesMap(),
-                product.getImages()
+                product.getImages().stream()
+                        .map(Image::getImage)
+                        .collect(Collectors.toSet())
         );
     }
 
-    public ProductModel(Long id, String name, Double price, String description, String category, Date created, Date updated, Map<String, Object> features, Set<Image> images) {
+    public ProductModel(Long id, String name, Double price, String description, String category, Date created, Date updated, Map<String, Object> features, Set<byte[]> images) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -104,11 +107,11 @@ public class ProductModel {
         this.features = features;
     }
 
-    public Set<Image> getImages() {
+    public Set<byte[]> getImages() {
         return images;
     }
 
-    public void setImages(Set<Image> images) {
+    public void setImages(Set<byte[]> images) {
         this.images = images;
     }
 }
