@@ -19,11 +19,19 @@ public class Image {
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
+    public Image() {}
+
     public Image(MultipartFile file) throws IOException {
         String generatedFileName= UUID.randomUUID().toString() + file.getOriginalFilename();
         this.fileName = generatedFileName;
         // paste an upload path below
-        file.transferTo(new File("D:/dev/velotochka/src/main/resources/" + generatedFileName));
+        String folderName = System.getProperty("user.home") + File.separator + "velotochka" + File.separator;
+        File folder = new File(folderName);
+        folder.mkdirs();
+        if (!folder.isDirectory()) {
+            throw new IOException(folderName + " is not a folder");
+        }
+        file.transferTo(new File(folderName + generatedFileName));
     }
 
     public Long getId() {

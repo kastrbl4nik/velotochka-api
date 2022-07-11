@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,9 +44,13 @@ public class ProductService {
 
         if(files != null) {
             Set<Image> images = product.getImages();
+            if (images == null) {
+                images = new HashSet<>();
+            }
+            Set<Image> finalImages = images;
             files.forEach(file -> {
                 try {
-                    images.add(new Image(file));
+                    finalImages.add(new Image(file));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

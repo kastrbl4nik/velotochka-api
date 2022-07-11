@@ -32,7 +32,7 @@ public class ProductController {
     }
 
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity saveProduct(@RequestParam String productJSON, @RequestParam Set<MultipartFile> files) throws JsonProcessingException {
+    public ResponseEntity saveProduct(@RequestParam(name = "body") String productJSON, @RequestParam(name = "images") Set<MultipartFile> files) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Product product = objectMapper.readValue(productJSON, Product.class);
         return createResponseEntity(() -> productService.saveProduct(product, files));
