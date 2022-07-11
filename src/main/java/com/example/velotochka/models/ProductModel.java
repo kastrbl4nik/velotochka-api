@@ -22,7 +22,7 @@ public class ProductModel {
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date updated;
     private Map<String, Object> features;
-    private Set<byte[]> images;
+    private Set<String> images;
     public static ProductModel toModel(Product product) {
         return new ProductModel(
                 product.getId(),
@@ -34,12 +34,12 @@ public class ProductModel {
                 product.getUpdated(),
                 product.getFeaturesMap(),
                 product.getImages().stream()
-                        .map(Image::getImage)
+                        .map(Image::getFileName)
                         .collect(Collectors.toSet())
         );
     }
 
-    public ProductModel(Long id, String name, Double price, String description, String category, Date created, Date updated, Map<String, Object> features, Set<byte[]> images) {
+    public ProductModel(Long id, String name, Double price, String description, String category, Date created, Date updated, Map<String, Object> features, Set<String> images) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -107,11 +107,11 @@ public class ProductModel {
         this.features = features;
     }
 
-    public Set<byte[]> getImages() {
+    public Set<String> getImages() {
         return images;
     }
 
-    public void setImages(Set<byte[]> images) {
+    public void setImages(Set<String> images) {
         this.images = images;
     }
 }

@@ -3,11 +3,15 @@ package com.example.velotochka.controllers;
 import com.example.velotochka.entities.Category;
 import com.example.velotochka.entities.Product;
 import com.example.velotochka.services.ProductService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 @CrossOrigin
@@ -27,9 +31,11 @@ public class ProductController {
         return createResponseEntity(() -> productService.findProductById(id));
     }
 
-    @PostMapping
-    public ResponseEntity saveProduct(@RequestBody Product product) {
-        return createResponseEntity(() -> productService.saveProduct(product));
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity saveProduct(@RequestParam String productJSON, @RequestParam Set<MultipartFile> files) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Product product = objectMapper.readValue(productJSON, Product.class);
+        return createResponseEntity(() -> productService.saveProduct(product, files));
     }
 
     @DeleteMapping("{id}")

@@ -1,19 +1,30 @@
 package com.example.velotochka.entities;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.persistence.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Entity
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
-    @Column(columnDefinition="BLOB")
-    private byte[] image;
+    private String fileName;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
-    public Image() {}
+    public Image(MultipartFile file) throws IOException {
+        String generatedFileName= UUID.randomUUID().toString() + file.getOriginalFilename();
+        this.fileName = generatedFileName;
+        // paste an upload path below
+        file.transferTo(new File("D:/dev/velotochka/src/main/resources/" + generatedFileName));
+    }
 
     public Long getId() {
         return id;
@@ -23,12 +34,12 @@ public class Image {
         this.id = id;
     }
 
-    public byte[] getImage() {
-        return image;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public Product getProduct() {
@@ -38,4 +49,5 @@ public class Image {
     public void setProduct(Product product) {
         this.product = product;
     }
+
 }

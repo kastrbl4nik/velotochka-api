@@ -1,6 +1,7 @@
 package com.example.velotochka.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -33,10 +34,12 @@ public class Product {
             orphanRemoval = true
     )
     private Set<Image> images;
+
     @ElementCollection
     private List<Feature> features;
 
     public Product() {}
+
     public void addImage(Image image) {
         images.add(image);
         image.setProduct(this);
@@ -83,6 +86,7 @@ public class Product {
     }
 
     public void setImages(Set<Image> images) {
+        images.forEach(image -> image.setProduct(this));
         this.images = images;
     }
 

@@ -7,8 +7,12 @@ import com.example.velotochka.models.ProductModel;
 import com.example.velotochka.repositories.CategoryRepository;
 import com.example.velotochka.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,7 +28,7 @@ public class ProductService {
                 .map(ProductModel::toModel)
                 .collect(Collectors.toList());
     }
-    public ProductModel saveProduct(Product product) throws RuntimeException {
+    public ProductModel saveProduct(Product product, Set<MultipartFile> files) throws RuntimeException {
         Category category = product.getCategory();
         if (category != null) {
             Category existingCategory = categoryRepository.findByName(category.getName());
@@ -36,10 +40,19 @@ public class ProductService {
         } else {
             throw new IllegalArgumentException("Category cannot be null.");
         }
-        Set<Image> images = product.getImages();
-        for (Image image : images) {
-            image.setProduct(product);
+
+        if(files != null) {
+            Set<Image> images = product.getImages();
+            files.forEach(file -> {
+                try {
+                    images.add(new Image(file));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            product.setImages(images);
         }
+
         return ProductModel.toModel(productRepository.save(product));
     }
     public ProductModel findProductById(Long id) {
