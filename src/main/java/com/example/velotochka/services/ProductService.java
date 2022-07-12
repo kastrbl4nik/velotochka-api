@@ -7,15 +7,12 @@ import com.example.velotochka.models.ProductModel;
 import com.example.velotochka.repositories.CategoryRepository;
 import com.example.velotochka.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,6 +81,27 @@ public class ProductService {
     }
     public Category saveCategory(Category category) {
         return categoryRepository.save(category);
+    }
+
+    public List<ProductModel> findProductsByFeatures(MultiValueMap<String, String> features){
+        List<Product> answer = null;
+        for (Map.Entry<String, List<String>> entry : features.entrySet()) {
+            String key = entry.getKey();
+            for (String value : entry.getValue()) {
+                List<Product> products = productRepository.findByFeatures_NameAndFeatures_Value(key, value);
+                if (answer == null) { // this is true during first iteration
+                    answer = products;
+                } else {
+                    answer.retainAll(products);
+                }
+            }
+        }
+        if (answer == null) {
+            answer = new ArrayList<>();
+        }
+        return answer.stream()
+                .map(ProductModel::toModel)
+                .collect(Collectors.toList());
     }
 
 }
