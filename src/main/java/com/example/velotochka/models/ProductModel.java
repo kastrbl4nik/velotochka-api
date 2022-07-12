@@ -21,7 +21,7 @@ public class ProductModel {
     private Date created;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date updated;
-    private Map<String, Object> features;
+    private Map<String, List<Object>> features;
     private Set<String> images;
     public static ProductModel toModel(Product product) {
         return new ProductModel(
@@ -39,7 +39,7 @@ public class ProductModel {
         );
     }
 
-    public ProductModel(Long id, String name, Double price, String description, String category, Date created, Date updated, Map<String, Object> features, Set<String> images) {
+    public ProductModel(Long id, String name, Double price, String description, String category, Date created, Date updated, Map<String, List<Object>> features, Set<String> images) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -99,11 +99,11 @@ public class ProductModel {
         this.updated = updated;
     }
 
-    public Map<String, Object> getFeatures() {
+    public Map<String, List<Object>> getFeatures() {
         return features;
     }
 
-    public void setFeatures(Map<String, Object> features) {
+    public void setFeatures(Map<String, List<Object>> features) {
         this.features = features;
     }
 
