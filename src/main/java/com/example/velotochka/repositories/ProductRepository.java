@@ -1,6 +1,5 @@
 package com.example.velotochka.repositories;
 
-import com.example.velotochka.entities.Category;
 import com.example.velotochka.entities.Product;
 import org.springframework.data.repository.CrudRepository;
 

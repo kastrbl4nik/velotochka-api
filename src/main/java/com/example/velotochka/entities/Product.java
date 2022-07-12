@@ -1,8 +1,6 @@
 package com.example.velotochka.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

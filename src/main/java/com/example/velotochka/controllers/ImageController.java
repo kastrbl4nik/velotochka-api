@@ -1,8 +1,6 @@
 package com.example.velotochka.controllers;
 
 import com.example.velotochka.entities.Image;
-import com.example.velotochka.repositories.ImageRepository;
-import com.sun.org.apache.xerces.internal.impl.dv.util.HexBin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;

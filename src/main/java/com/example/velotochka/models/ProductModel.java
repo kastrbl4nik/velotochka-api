@@ -2,7 +2,6 @@ package com.example.velotochka.models;
 
 import com.example.velotochka.entities.Image;
 import com.example.velotochka.entities.Product;
-import com.example.velotochka.entities.Feature;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
