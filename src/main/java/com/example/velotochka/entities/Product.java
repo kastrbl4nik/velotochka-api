@@ -93,11 +93,10 @@ public class Product {
     public List<Feature> getFeatures() {
         return features;
     }
-    public Map<String, Object> getFeaturesMap() {
-        Map<String, Object> result = new HashMap<String, Object>();
-        for (Feature f :
-                features) {
-            result.put(f.name, f.getConvertedValue());
+    public Map<String, List<Object>> getFeaturesMap() {
+        Map<String, List<Object>> result = new HashMap<>();
+        for (Feature f : features) {
+            result.computeIfAbsent(f.name, k -> new ArrayList<>()).add(f.getConvertedValue());
         }
         return result;
     }
