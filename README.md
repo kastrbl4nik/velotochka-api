@@ -5,13 +5,13 @@
 In MySQL create a database, and change the `application.properties` file accordingly if needed.
 
 ### Routes
-Implemented
 
 | HTTP Request | URI                                  | Description                                                       | 
 |--------------|--------------------------------------|-------------------------------------------------------------------|
 | GET          | /products/                           | returns a list of all products                                    |
 | GET          | /products/{id}                       | returns a specific product                                        |
 | GET          | /images/{image-name}                 | returns an image by its name                                      |
+| GET          | /products/features/{features}        | returns a list of products with certain features                  |
 | GET          | /products/categories                 | returns a list of categories                                      |
 | GET          | /products/categories/{category-name} | returns a list of products of a certain category                  |
 | POST         | /products/                           | adds a product                                                    |
