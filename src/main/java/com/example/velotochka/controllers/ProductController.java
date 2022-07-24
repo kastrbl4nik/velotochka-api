@@ -5,7 +5,15 @@ import com.example.velotochka.entities.Product;
 import com.example.velotochka.services.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.Explode;
+import io.swagger.v3.oas.annotations.enums.ParameterStyle;
+import net.kaczmarzyk.spring.data.jpa.domain.*;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +29,24 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
-    public ResponseEntity getProducts(@RequestParam(required = false) MultiValueMap<String, String> features){
+    /*@GetMapping
+    public ResponseEntity getProducts(
+            //@Parameter(explode = Explode.FALSE, style = ParameterStyle.FORM)
+            @RequestParam(required = false) MultiValueMap<String, String> features){
         return createResponseEntity(() -> productService.findProducts(features));
+    }*/
+
+    @GetMapping
+    public ResponseEntity getProducts(
+        @And({
+            @Spec(path="name", spec = Like.class),
+            @Spec(path="category.name", spec = Equal.class),
+            @Spec(path="price", params={"price>","price<"}, spec= Between.class)
+        })
+        Specification<Product> specification,
+        Pageable pageable
+    ) {
+        return createResponseEntity(() -> productService.findProducts(specification, pageable));
     }
 
     @GetMapping("{id}")
@@ -32,7 +55,7 @@ public class ProductController {
     }
 
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity saveProduct(@RequestParam(name = "body") String productJSON, @RequestParam(name = "images") Set<MultipartFile> files) throws JsonProcessingException {
+    public ResponseEntity saveProduct(@RequestParam(name = "body") String productJSON, @RequestParam(required = false, name = "images") Set<MultipartFile> files) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Product product = objectMapper.readValue(productJSON, Product.class);
         return createResponseEntity(() -> productService.saveProduct(product, files));
@@ -54,7 +77,9 @@ public class ProductController {
     }
 
     @GetMapping("/categories/{category}")
-    public ResponseEntity getCategoryProducts(@PathVariable String category) {
+    public ResponseEntity getCategoryProducts(
+            @PathVariable String category,
+            @RequestParam(required = false) MultiValueMap<String, String> features) {
         return createResponseEntity(() -> productService.findByCategory(category));
     }
 

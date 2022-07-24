@@ -7,6 +7,8 @@ import com.example.velotochka.models.ProductModel;
 import com.example.velotochka.repositories.CategoryRepository;
 import com.example.velotochka.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,8 +23,13 @@ public class ProductService {
     private ProductRepository productRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-    public List<ProductModel> findProducts(MultiValueMap<String, String> features) {
+    /*public List<ProductModel> findProducts(MultiValueMap<String, String> features) {
         return features.isEmpty() ? findAllProducts() : findProductsByFeatures(features);
+    }*/
+    public List<ProductModel> findProducts(Specification<Product> specification, Pageable pageable) {
+        return productRepository.findAll(specification, pageable).stream()
+                .map(ProductModel::toModel)
+                .collect(Collectors.toList());
     }
     public List<ProductModel> findAllProducts() {
         return productRepository.findAll().stream()
