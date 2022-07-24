@@ -22,8 +22,8 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity getProducts() {
-        return createResponseEntity(() -> productService.findAllProducts());
+    public ResponseEntity getProducts(@RequestParam(required = false) MultiValueMap<String, String> features){
+        return createResponseEntity(() -> productService.findProducts(features));
     }
 
     @GetMapping("{id}")
@@ -62,13 +62,6 @@ public class ProductController {
     public ResponseEntity deleteCategoryById(@PathVariable Long id) {
         return createResponseEntity(() -> productService.deleteCategoryById(id));
     }
-
-    @GetMapping("/features")
-    public ResponseEntity getByFeatures(@RequestParam MultiValueMap<String, String> features){
-        return createResponseEntity(() -> productService.findProductsByFeatures(features));
-    }
-
-
 
     private ResponseEntity<Object> createResponseEntity(Supplier<Object> supplier) {
         try {

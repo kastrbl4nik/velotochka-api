@@ -21,6 +21,9 @@ public class ProductService {
     private ProductRepository productRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+    public List<ProductModel> findProducts(MultiValueMap<String, String> features) {
+        return features.isEmpty() ? findAllProducts() : findProductsByFeatures(features);
+    }
     public List<ProductModel> findAllProducts() {
         return productRepository.findAll().stream()
                 .map(ProductModel::toModel)
