@@ -63,6 +63,8 @@ public class ProductService {
                 }
             });
             product.setImages(images);
+        } else {
+            product.setImages(new HashSet<>());
         }
 
         return ProductModel.toModel(productRepository.save(product));
