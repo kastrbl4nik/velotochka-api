@@ -5,20 +5,14 @@ import com.example.velotochka.entities.Product;
 import com.example.velotochka.services.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.Explode;
-import io.swagger.v3.oas.annotations.enums.ParameterStyle;
-import net.kaczmarzyk.spring.data.jpa.domain.*;
-import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
-import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -38,15 +32,13 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity getProducts(
-        @And({
-            @Spec(path="name", spec = Like.class),
-            @Spec(path="category.name", spec = Equal.class),
-            @Spec(path="price", params={"price>","price<"}, spec= Between.class)
-        })
-        Specification<Product> specification,
-        Pageable pageable
+            @RequestParam(name = "category", defaultValue = "") List<String> categories,
+            @RequestParam(name = "price>",   defaultValue = "") List<String> minPrices,
+            @RequestParam(name = "price<",   defaultValue = "") List<String> maxPrices,
+            @RequestParam(name = "name",     defaultValue = "") List<String> names,
+            Pageable pageable
     ) {
-        return createResponseEntity(() -> productService.findProducts(specification, pageable));
+        return createResponseEntity(() -> productService.testProductCategory(categories, minPrices, maxPrices, names, pageable));
     }
 
     @GetMapping("{id}")

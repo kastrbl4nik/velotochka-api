@@ -6,6 +6,10 @@ import com.example.velotochka.entities.Product;
 import com.example.velotochka.models.ProductModel;
 import com.example.velotochka.repositories.CategoryRepository;
 import com.example.velotochka.repositories.ProductRepository;
+import com.example.velotochka.specifications.ProductCategorySpecification;
+import com.example.velotochka.specifications.ProductMaxPriceSpecification;
+import com.example.velotochka.specifications.ProductMinPriceSpecification;
+import com.example.velotochka.specifications.ProductNameSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -112,6 +116,29 @@ public class ProductService {
             answer = new ArrayList<>();
         }
         return answer.stream()
+                .map(ProductModel::toModel)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductModel> testProductCategory(
+            List<String> categories,
+            List<String> minPrices,
+            List<String> maxPrices,
+            List<String> names, Pageable pageable) {
+        Specification<Product> specification = Specification.where(null);
+        for (String category : categories) {
+            specification = specification.and(new ProductCategorySpecification(category));
+        }
+        for (String minPrice : minPrices) {
+            specification = specification.and(new ProductMinPriceSpecification(minPrice));
+        }
+        for (String maxPrice : maxPrices) {
+            specification = specification.and(new ProductMaxPriceSpecification(maxPrice));
+        }
+        for (String name : names) {
+            specification = specification.and(new ProductNameSpecification(name));
+        }
+        return productRepository.findAll(specification, pageable).stream()
                 .map(ProductModel::toModel)
                 .collect(Collectors.toList());
     }
