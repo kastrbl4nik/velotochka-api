@@ -6,10 +6,7 @@ import com.example.velotochka.entities.Product;
 import com.example.velotochka.models.ProductModel;
 import com.example.velotochka.repositories.CategoryRepository;
 import com.example.velotochka.repositories.ProductRepository;
-import com.example.velotochka.specifications.ProductCategorySpecification;
-import com.example.velotochka.specifications.ProductMaxPriceSpecification;
-import com.example.velotochka.specifications.ProductMinPriceSpecification;
-import com.example.velotochka.specifications.ProductNameSpecification;
+import com.example.velotochka.specifications.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -120,11 +117,13 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductModel> testProductCategory(
+    public List<ProductModel> findProducts(
             List<String> categories,
             List<String> minPrices,
             List<String> maxPrices,
-            List<String> names, Pageable pageable) {
+            List<String> names,
+            MultiValueMap<String, String> features,
+            Pageable pageable) {
         Specification<Product> specification = Specification.where(null);
         for (String category : categories) {
             specification = specification.and(new ProductCategorySpecification(category));
@@ -137,6 +136,12 @@ public class ProductService {
         }
         for (String name : names) {
             specification = specification.and(new ProductNameSpecification(name));
+        }
+        for (Map.Entry<String, List<String>> entry : features.entrySet()) {
+            String key = entry.getKey();
+            for (String value : entry.getValue()) {
+                specification = specification.and(new ProductFeatureSpecification(key, value));
+            }
         }
         return productRepository.findAll(specification, pageable).stream()
                 .map(ProductModel::toModel)

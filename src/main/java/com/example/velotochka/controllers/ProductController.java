@@ -36,9 +36,15 @@ public class ProductController {
             @RequestParam(name = "price>",   defaultValue = "") List<String> minPrices,
             @RequestParam(name = "price<",   defaultValue = "") List<String> maxPrices,
             @RequestParam(name = "name",     defaultValue = "") List<String> names,
+            @RequestParam(required = false,  defaultValue = "") MultiValueMap<String, String> features,
             Pageable pageable
     ) {
-        return createResponseEntity(() -> productService.testProductCategory(categories, minPrices, maxPrices, names, pageable));
+        features.remove("category");
+        features.remove("price>");
+        features.remove("price<");
+        features.remove("name");
+
+        return createResponseEntity(() -> productService.findProducts(categories, minPrices, maxPrices, names, features, pageable));
     }
 
     @GetMapping("{id}")
