@@ -3,6 +3,8 @@ package com.example.velotochka.services;
 import com.example.velotochka.entities.Category;
 import com.example.velotochka.entities.Image;
 import com.example.velotochka.entities.Product;
+import com.example.velotochka.exceptions.CategoryNotFoundException;
+import com.example.velotochka.exceptions.ProductNotFoundException;
 import com.example.velotochka.models.ProductModel;
 import com.example.velotochka.repositories.ProductRepository;
 import com.example.velotochka.specifications.*;
@@ -29,11 +31,11 @@ public class ProductService {
     public ProductModel saveProduct(Product product, Set<MultipartFile> files) throws RuntimeException {
         Category category = product.getCategory();
         if (category != null) {
-            boolean categoryAlreadyExists = (null != categoryService.findByName(category.getName()));
+            boolean categoryAlreadyExists = categoryService.findByName(category.getName()).isPresent();
             if (categoryAlreadyExists) {
                 product.setCategory(category);
             } else {
-                categoryService.save(product.getCategory());
+                throw new CategoryNotFoundException(category.getName());
             }
         } else {
             throw new IllegalArgumentException("Category cannot be null.");
@@ -55,7 +57,7 @@ public class ProductService {
     }
 
     public ProductModel findProductById(Long id) {
-        return ProductModel.toModel(productRepository.findById(id).orElse(new Product()));
+        return ProductModel.toModel(productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException(id)));
     }
 
     public Long deleteProductById(Long id) {

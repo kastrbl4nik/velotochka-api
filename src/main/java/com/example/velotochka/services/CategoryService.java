@@ -1,11 +1,13 @@
 package com.example.velotochka.services;
 
 import com.example.velotochka.entities.Category;
+import com.example.velotochka.exceptions.CategoryNotFoundException;
 import com.example.velotochka.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,10 +23,10 @@ public class CategoryService {
     }
 
     public String getNameById(Long id) {
-        return categoryRepository.findById(id).get().getName();
+        return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id)).getName();
     }
 
-    public Category findByName(String name) {
+    public Optional<Category> findByName(String name) {
         return categoryRepository.findByName(name);
     }
 
