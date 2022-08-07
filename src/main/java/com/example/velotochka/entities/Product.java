@@ -26,11 +26,7 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-    @OneToMany(
-            mappedBy = "product",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @ElementCollection
     private Set<Image> images;
 
     @ElementCollection
@@ -40,11 +36,9 @@ public class Product {
 
     public void addImage(Image image) {
         images.add(image);
-        image.setProduct(this);
     }
     public void removeImage(Image image) {
         images.remove(image);
-        image.setProduct(null);
     }
 
     public Date getUpdated() {
@@ -84,7 +78,6 @@ public class Product {
     }
 
     public void setImages(Set<Image> images) {
-        images.forEach(image -> image.setProduct(this));
         this.images = images;
     }
 
