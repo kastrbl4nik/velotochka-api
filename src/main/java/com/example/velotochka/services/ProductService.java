@@ -31,9 +31,9 @@ public class ProductService {
     public ProductModel saveProduct(Product product, Set<MultipartFile> files) throws RuntimeException {
         Category category = product.getCategory();
         if (category != null) {
-            boolean categoryAlreadyExists = categoryService.findByName(category.getName()).isPresent();
-            if (categoryAlreadyExists) {
-                product.setCategory(category);
+            Optional<Category> categoryOptional = categoryService.findByName(category.getName());
+            if (categoryOptional.isPresent()) {
+                product.setCategory(categoryOptional.get());
             } else {
                 throw new CategoryNotFoundException(category.getName());
             }
