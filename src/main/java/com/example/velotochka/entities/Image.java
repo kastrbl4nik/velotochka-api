@@ -1,43 +1,32 @@
 package com.example.velotochka.entities;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-@Entity
+@Embeddable
 public class Image {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+
     private String fileName;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Product product;
 
     public Image() {}
 
     public Image(MultipartFile file) throws IOException {
-        String generatedFileName= UUID.randomUUID().toString() + file.getOriginalFilename();
+        String generatedFileName= UUID.randomUUID() + file.getOriginalFilename();
         this.fileName = generatedFileName;
         // paste an upload path below
-        String folderName = System.getProperty("user.home") + File.separator + "velotochka" + File.separator;
-        File folder = new File(folderName);
+        File folder = new File(FOLDER_NAME);
         folder.mkdirs();
         if (!folder.isDirectory()) {
-            throw new IOException(folderName + " is not a folder");
+            throw new IOException(FOLDER_NAME + " is not a folder");
         }
-        file.transferTo(new File(folderName + generatedFileName));
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        file.transferTo(new File(FOLDER_NAME + generatedFileName));
     }
 
     public String getFileName() {
@@ -48,12 +37,6 @@ public class Image {
         this.fileName = fileName;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+    public static String FOLDER_NAME = System.getProperty("user.home") + File.separator + "velotochka" + File.separator + "images" + File.separator;
 
 }

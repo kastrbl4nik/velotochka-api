@@ -27,7 +27,7 @@ public class ImageController {
     public void getImageByName(@PathVariable String name, HttpServletResponse response) throws IOException{
 
 
-        String folderName = System.getProperty("user.home") + File.separator + "velotochka" + File.separator;
+        String folderName = Image.FOLDER_NAME;
         String filename = folderName + name;
         File image = new File(filename);
 
